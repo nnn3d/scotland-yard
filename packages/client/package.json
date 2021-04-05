@@ -1,0 +1,90 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "@logux/core": "^0.6.2",
+    "@logux/redux": "^0.7.1",
+    "@material-ui/core": "4.11.0",
+    "@material-ui/icons": "4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.57",
+    "@reduxjs/toolkit": "^1.5.1",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "@types/lodash": "4.14.168",
+    "@types/markdown-to-jsx": "6.11.1",
+    "final-form": "4.20.1",
+    "fp-ts": "2.8.1",
+    "history": "5.0.0",
+    "io-ts": "2.2.9",
+    "lodash": "4.17.21",
+    "markdown-to-jsx": "6.11.4",
+    "react": "^16.13.1",
+    "react-app-rewired": "^2.1.8",
+    "react-dom": "^16.13.1",
+    "react-final-form": "6.5.1",
+    "react-redux": "7.2.0",
+    "react-router-dom": "6.0.0-beta.0",
+    "react-scripts": "^4.0.3",
+    "react-use": "15.3.3",
+    "redux": "4.0.5",
+    "reselect": "4.0.0",
+    "sass": "^1.32.8",
+    "string-to-color": "2.2.2",
+    "styled-components": "^5.2.1",
+    "ts-essentials": "^7.0.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.0",
+    "@types/react": "^16.9.0",
+    "@types/react-dom": "^16.9.0",
+    "@types/react-redux": "7.1.9",
+    "@types/redux": "3.6.0",
+    "@types/styled-components": "5.1.1",
+    "@types/testing-library__dom": "7.5.0",
+    "@types/ws": "7.2.6",
+    "babel-plugin-styled-components": "^1.12.0",
+    "turndown": "6.0.0",
+    "typescript": "^4.2.3",
+    "type-fest": "^1.0.1"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "plugin:@typescript-eslint/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint",
+      "unused-imports"
+    ],
+    "rules": {
+      "@typescript-eslint/no-unused-vars": "error",
+      "unused-imports/no-unused-imports-ts": "error",
+      "unused-imports/no-unused-vars-ts": "off",
+      "react-hooks/exhaustive-deps": "error",
+      "@typescript-eslint/member-delimiter-style": "off",
+      "@typescript-eslint/explicit-function-return-type": "off",
+      "@typescript-eslint/explicit-module-boundary-types": "off"
+    }
+  },
+  "browserslist": {
+    "production": [
+      "last 3 chrome version",
+      "last 3 firefox version",
+      "last 3 safari version"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

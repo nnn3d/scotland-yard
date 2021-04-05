@@ -1,0 +1,45 @@
+{
+  "name": "dnd",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "packages/client",
+    "packages/common",
+    "packages/server"
+  ],
+  "scripts": {
+    "client:start": "cd ./packages/client && yarn start",
+    "client:build": "cd ./packages/client && yarn build",
+    "server:dev": "cd ./packages/server && yarn dev",
+    "server:prod": "cd ./packages/server && yarn prod"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.20.0",
+    "@typescript-eslint/parser": "^4.20.0",
+    "babel-eslint": "^10.0.0",
+    "eslint": "^7.5.0",
+    "eslint-config-react-app": "^6.0.0",
+    "eslint-plugin-flowtype": "^5.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-react": "^7.20.3",
+    "eslint-plugin-react-hooks": "^4.0.8",
+    "eslint-plugin-unused-imports": "0.1.3",
+    "husky": "4.2.5",
+    "lint-staged": "10.2.11",
+    "prettier": "^2.2.1",
+    "typescript": "^4.2.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged && tsc -p ./packages/client && tsc -p ./packages/server"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,css,scss}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  }
+}
