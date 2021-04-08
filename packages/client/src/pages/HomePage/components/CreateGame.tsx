@@ -18,7 +18,7 @@ import {
   PLAYER_COLORS,
   PlayerColor,
 } from 'common/modules/game/types/PlayerColor'
-import Autocomplete from '@material-ui/lab/autocomplete'
+import Autocomplete from '@material-ui/lab/Autocomplete'
 import { GAME_CONFIG } from 'common/modules/game/constants/gameConfig'
 import { MR_X_COLOR } from 'common/modules/game/types/MrX'
 
