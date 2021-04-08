@@ -56,6 +56,13 @@ module.exports = function override(config) {
 
     // resolve common folder not from node_modules
     config.resolve.modules.unshift(require('path').resolve(__dirname, '../'))
+  } else {
+    config.plugins = config.plugins.filter(
+      (plugin) =>
+        !['ESLintWebpackPlugin', 'ForkTsCheckerWebpackPlugin'].includes(
+          plugin.constructor.name,
+        ),
+    )
   }
 
   return config
