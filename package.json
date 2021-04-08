@@ -33,7 +33,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged && tsc -p ./packages/client && tsc -p ./packages/server"
+      "pre-commit": "lint-staged && cd ./packages/client && tsc && cd ../server && tsc"
     }
   },
   "lint-staged": {

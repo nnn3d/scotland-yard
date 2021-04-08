@@ -1,6 +1,5 @@
 import { createSelectorCreator, defaultMemoize } from 'reselect'
 import { useSelector } from 'react-redux'
-import { AppState } from 'client/src/redux/configureStore'
 
 type Selector<S, R> = (state: S) => R
 
@@ -22,7 +21,7 @@ type OutputParametricSelector<S, P, R, C> = ParametricSelector<S, P, R> & {
   get: (param: P) => R
 }
 
-export type OutputAppSelector<R> = OutputSelector<AppState, R, any>
+export type OutputAppSelector<R> = OutputSelector<any, R, any>
 
 /* homogeneous selector parameter types */
 
