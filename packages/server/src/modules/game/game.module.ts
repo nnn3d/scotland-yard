@@ -8,11 +8,12 @@ import {
   gameListChannel,
 } from 'common/modules/game/channels'
 import { GUEST_USER } from 'common/modules/user/redux'
-import { gameQueue } from 'modules/game/createGameType'
+import { createGameType, gameQueue } from 'modules/game/createGameType'
 import {
   gameActions,
   gameListActions,
   GameListItemState,
+  gameUpdaters,
   newGameDataActions,
 } from 'common/modules/game/redux'
 import { MR_X_COLOR } from 'common/modules/game/types/MrX'
@@ -23,6 +24,7 @@ import {
 import { createGameState } from 'modules/game/createGameState'
 import { GameStatic } from 'common/modules/game/Game'
 import { loginValidator } from 'common/modules/user/validators'
+import { GAME_CONFIG } from 'common/modules/game/constants/gameConfig'
 
 function gameDocToGameListItem(gameDoc: GameDocument): GameListItemState {
   const gameObj = gameDoc.toObject()
@@ -76,8 +78,10 @@ export function gameModule(server: Server) {
       }
 
       const userDocs = await UserModel.find({
-        login: new RegExp(name),
-      }).exec()
+        login: new RegExp(name.toLowerCase()),
+      })
+        .limit(10)
+        .exec()
 
       await ctx.sendBack(
         newGameDataActions.setCompletions({
@@ -111,7 +115,7 @@ export function gameModule(server: Server) {
       async access({ data, params, userId }) {
         if (
           userId === GUEST_USER ||
-          (isDetectives && params.userId !== userId)
+          (!isDetectives && params.userId !== userId)
         ) {
           return false
         }
@@ -125,7 +129,9 @@ export function gameModule(server: Server) {
         if (gameDoc) {
           data.game = new GameStatic(gameDoc.toObject())
 
-          return data.game.users.includes(userId)
+          return isDetectives
+            ? data.game.state.ownerName === userId
+            : data.game.users.includes(userId)
         } else {
           return false
         }
@@ -191,5 +197,83 @@ export function gameModule(server: Server) {
     },
   )
 
-  // const gameType = createGameType(server)
+  const gameType = createGameType(server)
+
+  gameType(gameActions.useDoubleTicket, {
+    process(ctx, action, meta) {
+      const game = ctx.data.game
+
+      gameUpdaters.useDoubleTicket(game, action)
+    },
+    resend(ctx, action, meta) {
+      return { channels: ctx.data.game.playerChannels }
+    },
+  })
+
+  gameType(gameActions.moveTo, {
+    process(ctx, action, meta) {
+      const { payload } = action
+      const game = ctx.data.game
+      const movedPlayer = game.activePlayer
+      const isMrX = game.isActivePlayerMrX
+
+      gameUpdaters.moveTo(game, action)
+
+      if (isMrX) {
+        const isDisclosureTurn = GAME_CONFIG.disclosureMrXTurns.includes(
+          game.turn.number,
+        )
+        const actionForDetecrives = {
+          ...action,
+          payload: { ...payload, station: undefined },
+        }
+
+        server.process(actionForDetecrives, {
+          status: 'processed',
+          channels: game.detectiveChannels,
+        })
+        if (isDisclosureTurn) {
+          const lastMrXStationAction = gameActions.setMrXLastStation(payload)
+          gameUpdaters.setMrXLastStation(game, lastMrXStationAction)
+          server.process(lastMrXStationAction, {
+            status: 'processed',
+            channels: game.detectiveChannels,
+          })
+        }
+      } else {
+        if (movedPlayer.station === game.mrXPlayer.station) {
+          const winAction = gameActions.detectiveWins({
+            mrXStation: Number(game.mrXPlayer.station),
+            _id: game.id,
+          })
+          gameUpdaters.detectiveWins(game, winAction)
+          server.process(winAction, {
+            status: 'processed',
+            channels: game.playerChannels,
+          })
+        } else {
+          server.process(action, {
+            status: 'processed',
+            channels: game.playerChannels,
+          })
+        }
+      }
+    },
+  })
+
+  gameType(
+    gameActions.delete,
+    {
+      access(ctx) {
+        return ctx.data.game.state.ownerName === ctx.userId
+      },
+      async process(ctx) {
+        await GameModel.findByIdAndDelete(ctx.data.game.state._id)
+      },
+      resend(ctx) {
+        return { channels: ctx.data.game.playerChannels }
+      },
+    },
+    { save: false },
+  )
 }

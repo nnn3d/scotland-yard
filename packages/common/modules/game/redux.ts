@@ -6,6 +6,7 @@ import { GameStatic } from 'common/modules/game/Game'
 import { MR_X_COLOR } from 'common/modules/game/types/MrX'
 import { PlayerColor } from 'common/modules/game/types/PlayerColor'
 import { Ticket } from 'common/modules/game/types/Ticket'
+import { GAME_CONFIG } from 'common/modules/game/constants/gameConfig'
 
 type WithGameReducer<Action extends IdPayloadAction> = (
   this: void,
@@ -28,21 +29,33 @@ export const gameUpdaters = extendType<
       game.playersMap[color].station = station
     })
   },
-  moveTo(
+  mrXMoveTo(
     game,
     {
       payload: { station, ticket },
-    }: IdPayloadAction<{ station: number; ticket: Ticket }>,
+    }: IdPayloadAction<{ station?: number; ticket: Ticket }>,
   ) {
-    if (!game.activePlayerCanMoveToStations[station]?.includes(ticket)) {
+    const hasStation = station != null
+    if (
+      game.state.stage !== 'inProgress' ||
+      (station != null
+        ? !game.activePlayerCanMoveToStations[station]?.includes(ticket)
+        : !game.isActivePlayerMrX)
+    ) {
       return
     }
 
-    game.activePlayer.station = station
+    if (hasStation) game.activePlayer.station = station
     game.activePlayer.tickets[ticket]--
 
     if (game.isActivePlayerMrX) {
       game.turn.number++
+      game.mrXHistory.push(ticket)
+      if (game.turn.number >= GAME_CONFIG.numberOfTurns) {
+        game.state.stage = 'mrXWin'
+      }
+    } else {
+      game.mrXPlayer.tickets[ticket]++
     }
 
     if (
@@ -58,22 +71,31 @@ export const gameUpdaters = extendType<
     for (const player of game.players) {
       game.turn.player = game.nextActivePlayer.color
 
-      if (game.activePlayerCanMove) {
+      if (game.activePlayerCanMove || game.isActivePlayerMrX) {
         break
       }
     }
+  },
+  moveTo(game, action: IdPayloadAction<{ station: number; ticket: Ticket }>) {
+    gameUpdaters.mrXMoveTo(game, action)
   },
   useDoubleTicket(game, action: IdPayloadAction) {
     if (game.activePlayer.color === MR_X_COLOR && !game.turn.activatedDouble) {
       game.turn.activatedDouble = true
     }
   },
+  setMrXLastStation(
+    game,
+    { payload: { station } }: IdPayloadAction<{ station: number }>,
+  ) {
+    game.mrXPlayer.lastStation = station
+  },
   detectiveWins(
     game,
     { payload: { mrXStation } }: IdPayloadAction<{ mrXStation: number }>,
   ) {
     game.state.stage = 'detectivesWin'
-    game.mrXPlayer.station = mrXStation
+    game.mrXPlayer.lastStation = mrXStation
   },
 })
 
@@ -108,10 +130,13 @@ export const { actions: gameClientActions, reducer: gameReducer } = createSlice(
     name: 'game',
     initialState: {} as ReducerState,
     reducers: {
+      ...withGameReducers,
       load(state, { payload }: IdPayloadAction<GameState>) {
         state[payload._id] = payload
       },
-      ...withGameReducers,
+      delete(state, { payload: { _id } }: IdPayloadAction) {
+        delete state[_id]
+      },
     },
   },
 )
@@ -145,12 +170,21 @@ export const {
   initialState: [] as GameListState,
   reducers: {
     load(state, { payload }: PayloadAction<GameListState>) {
-      return payload.sort((a, b) => a.createdAt - b.createdAt)
+      return payload.sort((a, b) => b.createdAt - a.createdAt)
     },
     add(state, { payload }: PayloadAction<GameListItemState>) {
       state.push(payload)
-      state.sort((a, b) => a.createdAt - b.createdAt)
+      state.sort((a, b) => b.createdAt - a.createdAt)
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(gameActions.delete, (state, { payload }) => {
+      const gameIndex = state.findIndex((game) => game.id === payload._id)
+      console.log(gameIndex)
+      if (gameIndex >= 0) {
+        state.splice(gameIndex, 1)
+      }
+    })
   },
 })
 

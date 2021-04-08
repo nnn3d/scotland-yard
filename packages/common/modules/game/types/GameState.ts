@@ -1,13 +1,17 @@
 import { PlayerColor } from 'common/modules/game/types/PlayerColor'
 import { WhenMrX } from 'common/modules/game/types/MrX'
-import { CommonTicket, MrXTicket } from 'common/modules/game/types/Ticket'
+import {
+  CommonTicket,
+  MrXTicket,
+  Ticket,
+} from 'common/modules/game/types/Ticket'
 
 export type GameState = {
   name: string
   ownerName: string
   players: Players
   turn: GameTurnState
-  mrXHistory: CommonTicket[]
+  mrXHistory: Ticket[]
   stage: GameStageState
 }
 
@@ -26,6 +30,7 @@ export type GamePlayerState<Color extends PlayerColor = PlayerColor> = {
   userName: string
   color: Color
   station: WhenMrX<Color, number | undefined, number>
+  lastStation?: number
   tickets: Record<CommonTicket, number> &
     WhenMrX<
       Color,

@@ -10,6 +10,7 @@ import {
   OutputSelector,
 } from 'common/utils/createUseSelector'
 import { MR_X_COLOR } from 'common/modules/game/types/MrX'
+import { BLACK_TICKET, Ticket } from 'common/modules/game/types/Ticket'
 
 export abstract class GameBase<AppState = any> {
   protected abstract getState(appState: AppState): GameState
@@ -18,13 +19,17 @@ export abstract class GameBase<AppState = any> {
 
   state = this.getState.bind(this)
 
-  players = createSelector(this.state, (state) => state.players)
+  private playersRaw = createSelector(this.state, (state) => state.players)
 
-  playersMap = createSelector(this.players, (players) =>
+  playersMap = createSelector(this.playersRaw, (players) =>
     players.reduce((playersMap, player) => {
       playersMap[player.color] = player as any
       return playersMap
     }, {} as { [Color in PlayerColor]: GamePlayerState<Color> }),
+  )
+
+  players = createSelector(this.playersMap, (playersMap) =>
+    PLAYER_COLORS.map((color) => playersMap[color]).filter(Boolean),
   )
 
   playersNumber = createSelector(this.players, (players) => players.length)
@@ -37,6 +42,8 @@ export abstract class GameBase<AppState = any> {
     this.playersMap,
     (playersMap) => playersMap[MR_X_COLOR],
   )
+
+  mrXHistory = createSelector(this.state, (state) => state.mrXHistory)
 
   users = createSelector(this.players, (players) =>
     players.map(({ userName }) => userName),
@@ -69,17 +76,21 @@ export abstract class GameBase<AppState = any> {
     this.activePlayer,
     this.activePlayerStation,
     this.detectivePlayers,
-    (player, station, detectivePlayers) =>
+    this.isActivePlayerMrX,
+    (player, station, detectivePlayers, isActivePlayerMrX) =>
       pickBy(
-        mapValues(station?.routes || {}, (tickets) =>
-          tickets?.filter((ticket) => Number(player.tickets[ticket]) > 0),
-        ),
+        mapValues(station?.routes || {}, (tickets) => {
+          if (isActivePlayerMrX && !tickets?.includes(BLACK_TICKET)) {
+            tickets?.push(BLACK_TICKET)
+          }
+          return tickets?.filter((ticket) => Number(player.tickets[ticket]) > 0)
+        }),
         (tickets, key) =>
           tickets?.length &&
           detectivePlayers.every(
             (detective) => detective.station !== Number(key),
           ),
-      ),
+      ) as Record<number, Ticket[] | undefined>,
   )
 
   activePlayerCanMove = createSelector(
@@ -88,16 +99,21 @@ export abstract class GameBase<AppState = any> {
   )
 
   nextActivePlayer = createSelector(
-    (appState) => appState,
-    this.playersMap,
+    this.players,
     this.playersNumber,
     this.activePlayer,
-    (appState, playersMap, playersNumber, activePlayer) => {
-      const activePlayerIndex = PLAYER_COLORS.indexOf(activePlayer.color)
-      const nextPlayerColor =
-        PLAYER_COLORS[(activePlayerIndex + 1) % PLAYER_COLORS.length]
-      return playersMap[nextPlayerColor]
+    (players, playersNumber, activePlayer) => {
+      const activePlayerIndex = players.findIndex(
+        ({ color }) => color === activePlayer.color,
+      )
+      return players[(activePlayerIndex + 1) % players.length]
     },
+  )
+
+  stage = createSelector(this.state, (state) => state.stage)
+
+  gameOver = createSelector(this.stage, (stage) =>
+    stage === 'detectivesWin' || stage === 'mrXWin' ? stage : undefined,
   )
 }
 

@@ -48,6 +48,9 @@ class GamePlayerSchema implements GamePlayerState {
   @prop({ required: true })
   station!: number
 
+  @prop()
+  lastStation?: number
+
   @prop({ required: true, type: GamePlayerTicketsSchema })
   tickets!: GamePlayerTicketsState
 }

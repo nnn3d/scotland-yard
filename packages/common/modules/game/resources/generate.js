@@ -13,7 +13,7 @@ const height = endY - startY
 
 const positions = positionsRaw.map(({ x, y }, index) => {
   const left = (x - startX) / width
-  const top = (y - startY) / height
+  const top = 1 - (y - startY) / height
 
   if (left < 0) throw new Error(`left < 0: ${left}, index ${index}`)
   if (left > 1) throw new Error(`left > 1: ${left}, index ${index}`)
@@ -27,12 +27,12 @@ const ticketTypes = ['taxi', 'bus', 'underground']
 
 const stations = positions.map((position, index) => {
   const stationIndex = index + 1
-  let typeIndex
+  let typeIndex = 0
 
   const connections = routes
     .filter((route) => route.includes(stationIndex))
     .map(([indexA, indexB, ticket]) => {
-      const destination = stationIndex === indexA ? indexB : indexA
+      const destination = (stationIndex === indexA ? indexB : indexA) - 1
       typeIndex = Math.max(ticketTypes.indexOf(ticket) || 0, typeIndex)
       return { destination, ticket }
     })

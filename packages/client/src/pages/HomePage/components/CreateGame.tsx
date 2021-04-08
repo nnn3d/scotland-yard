@@ -8,7 +8,7 @@ import {
   TextFieldProps,
 } from '@material-ui/core'
 import { gameActions, newGameDataActions } from 'common/modules/game/redux'
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useUserId } from 'hooks/useUserId'
 import { Field, FieldRenderProps, Form, useForm } from 'react-final-form'
 import { validateGameName } from 'common/modules/game/validators'
@@ -29,6 +29,7 @@ const required = (value: string) => {
 export function CreateGame() {
   const userId = useUserId()
   const dispatch = useDispatch()
+  const [key, setKey] = useState(0)
 
   const initialValues = useMemo(
     () => ({ name: '', mrX: '0', players: { player0: userId } }),
@@ -37,6 +38,7 @@ export function CreateGame() {
 
   return (
     <Form
+      key={String(key)}
       subscription={{ values: true }}
       initialValues={initialValues}
       onSubmit={async (
@@ -67,8 +69,8 @@ export function CreateGame() {
         await dispatch.sync(
           gameActions.createGame({ name, players: playersMap }),
         )
-        form.reset()
         dispatch(newGameDataActions.clear())
+        setKey((key) => key + 1)
       }}
     >
       {({ values, handleSubmit }) => (
@@ -196,6 +198,10 @@ function PlayerField({
           meta={meta}
           {...rest}
           {...params}
+          inputProps={{
+            ...params.inputProps,
+            value: name,
+          }}
         />
       )}
     />

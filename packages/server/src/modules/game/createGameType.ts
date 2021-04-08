@@ -2,13 +2,12 @@ import { Server, Action } from '@logux/server'
 import { ActionCreator, ActionCallbacks } from '@logux/server/base-server'
 import { GameModel, GameDocument } from './game.schema'
 import { GUEST_USER } from 'common/modules/user/redux'
-import { gameUserChannel } from 'common/modules/game/channels'
 import { EntityQueue } from 'modules/EntityQueue'
-import { GameStatic } from 'common/modules/game/Game'
+import { GameServer } from 'modules/game/GameServer'
 
 export const gameQueue = new EntityQueue()
 
-type CtxData = { gameDoc: GameDocument; game: GameStatic<GameDocument> }
+type CtxData = { gameDoc: GameDocument; game: GameServer }
 
 export function createGameType<S extends Server<H>, H extends object = {}>(
   server: S,
@@ -24,16 +23,12 @@ export function createGameType<S extends Server<H>, H extends object = {}>(
     actionCreator: AC,
     {
       access,
-      resend,
+      process,
       finally: finallyCallback,
       ...callbacks
     }: Partial<ActionCallbacks<ReturnType<AC>, D & CtxData, H>>,
-    options: {
-      resendAction?: boolean
-    } = {},
+    { save = true }: { save?: boolean } = {},
   ): void {
-    const { resendAction = true } = options
-
     server.type<AC, D & { doneTask(): void } & CtxData>(actionCreator, {
       ...callbacks,
       async access(ctx, action, meta) {
@@ -48,33 +43,20 @@ export function createGameType<S extends Server<H>, H extends object = {}>(
         }
 
         ctx.data.gameDoc = gameDoc
-        ctx.data.game = new GameStatic(gameDoc)
+        ctx.data.game = new GameServer(gameDoc)
 
         return access ? await access(ctx, action, meta) : true
       },
-      async resend(ctx, action, meta) {
-        const to = resend ? await resend(ctx, action, meta) : {}
-
-        if (!resendAction || !ctx.data.gameDoc) return to
-
-        const channel = gameUserChannel.link({
-          id: ctx.data.gameDoc._id.toString(),
-          userId: ctx.userId,
-        })
-
-        if (to.channel) {
-          to.channels = [to.channel, channel]
-          delete to.channel
-        } else if (to.channels) {
-          to.channels = to.channels.concat(channel)
-        } else {
-          to.channel = channel
+      async process(ctx, action, meta) {
+        await process?.(ctx, action, meta)
+        if (save) {
+          await ctx.data.gameDoc.save()
         }
-
-        return to
       },
       async finally(ctx, action, meta) {
-        ctx.data?.doneTask()
+        if (ctx.data.doneTask) {
+          ctx.data.doneTask()
+        }
 
         return finallyCallback && finallyCallback(ctx, action, meta)
       },

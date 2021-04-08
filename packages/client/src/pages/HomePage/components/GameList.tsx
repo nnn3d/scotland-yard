@@ -12,14 +12,16 @@ import { useUserId } from 'hooks/useUserId'
 import { useSubscription } from '@logux/redux'
 import { gameListChannel } from 'common/modules/game/channels'
 import React from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { gameDetectivesRoute, gameRoute } from 'constants/routes'
+import { gameActions } from 'common/modules/game/redux'
 
 export function GameList() {
   const userId = useUserId()
   const isSubscribing = useSubscription([gameListChannel.link()])
   const gameList = useSelector((state) => state.gameList)
+  const dispatch = useDispatch()
 
   return (
     <Grid container direction={'column'} spacing={3}>
@@ -34,7 +36,7 @@ export function GameList() {
       {!isSubscribing &&
         (gameList?.length ? (
           gameList.map((item) => (
-            <Grid item>
+            <Grid item key={item.id}>
               <Card>
                 <CardContent>
                   <Grid container direction={'column'} spacing={1}>
@@ -67,14 +69,28 @@ export function GameList() {
                     играть
                   </Button>
                   {item.ownerName === userId && (
-                    <Button
-                      component={Link}
-                      to={gameDetectivesRoute.link({ id: item.id })}
-                      size={'small'}
-                      color={'secondary'}
-                    >
-                      карта детективов
-                    </Button>
+                    <>
+                      <Button
+                        component={Link}
+                        to={gameDetectivesRoute.link({ id: item.id })}
+                        size={'small'}
+                        color={'secondary'}
+                      >
+                        карта детективов
+                      </Button>
+                      <Button
+                        style={{ marginLeft: 'auto' }}
+                        size={'small'}
+                        color={'secondary'}
+                        onClick={() => {
+                          if (window.confirm('Точно удалить?')) {
+                            dispatch.sync(gameActions.delete({ _id: item.id }))
+                          }
+                        }}
+                      >
+                        удалить
+                      </Button>
+                    </>
                   )}
                 </CardActions>
               </Card>

@@ -5,8 +5,8 @@ import { GlobalLoader } from 'components/GlobalLoader'
 import { createGlobalStyle } from 'styled-components'
 
 const GlobalStyles = createGlobalStyle`
-  body {
-    //overflow-y: scroll;
+  .MuiPopover-root {
+    transform: translate3d(0, 0, 0);
   }
 `
 

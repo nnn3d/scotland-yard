@@ -12,6 +12,6 @@ export const GAME_CONFIG = {
     double: 2,
   },
   numberOfTurns: 22,
-  disclosureMrXTurns: [3, 8, 13, 18, 22],
+  disclosureMrXTurns: [3, 8, 13, 18, 22] as number[],
   minPlayers: 4,
 } as const

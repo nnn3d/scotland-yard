@@ -3,6 +3,8 @@ import { createLoguxCreator } from '@logux/redux'
 import { rootReducer } from 'common/modules/redux/rootReducer'
 import { GUEST_USER, userActions } from 'common/modules/user/redux'
 import { homeRoute } from 'constants/routes'
+import { LoguxDispatch } from '@logux/redux/create-logux-creator'
+import { AnyAction } from '@logux/core'
 
 function logout() {
   localStorage.removeItem('userId')
@@ -73,7 +75,7 @@ declare module 'react-redux' {
   interface DefaultRootState extends AppState {}
 
   function useStore(): AppStore
-  function useDispatch(): AppStore['dispatch']
+  function useDispatch(): LoguxDispatch<AnyAction>
 }
 
 declare module '@logux/core' {
