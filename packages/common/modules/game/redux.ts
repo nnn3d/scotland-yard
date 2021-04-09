@@ -71,7 +71,7 @@ export const gameUpdaters = extendType<
     for (const player of game.players) {
       game.turn.player = game.nextActivePlayer.color
 
-      if (game.activePlayerCanMove) {
+      if (game.activePlayerCanMove || game.isActivePlayerMrX) {
         break
       }
     }
