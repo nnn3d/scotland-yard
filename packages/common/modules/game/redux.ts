@@ -76,10 +76,7 @@ export const gameUpdaters = extendType<
       }
     }
 
-    if (
-      !game.activePlayerCanMove ||
-      (currentPlayer === game.activePlayer && game.isActivePlayerMrX)
-    ) {
+    if (currentPlayer === game.activePlayer && game.isActivePlayerMrX) {
       game.state.stage = 'mrXWin'
     }
   },

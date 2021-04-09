@@ -219,6 +219,15 @@ export function gameModule(server: Server) {
 
       gameUpdaters.moveTo(game, action)
 
+      const lastMrXStationAction = gameActions.setMrXLastStation(payload)
+
+      if (game.gameOver) {
+        server.process(lastMrXStationAction, {
+          status: 'processed',
+          channels: game.detectiveChannels,
+        })
+      }
+
       if (isMrX) {
         const isDisclosureTurn = GAME_CONFIG.disclosureMrXTurns.includes(
           game.turn.number,
@@ -233,7 +242,6 @@ export function gameModule(server: Server) {
           channels: game.detectiveChannels,
         })
         if (isDisclosureTurn) {
-          const lastMrXStationAction = gameActions.setMrXLastStation(payload)
           gameUpdaters.setMrXLastStation(game, lastMrXStationAction)
           server.process(lastMrXStationAction, {
             status: 'processed',
