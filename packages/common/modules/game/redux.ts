@@ -52,6 +52,7 @@ export const gameUpdaters = extendType<
       game.mrXHistory.push(ticket)
       if (game.turn.number >= GAME_CONFIG.numberOfTurns) {
         game.state.stage = 'mrXWin'
+        return
       }
 
       if (game.turn.activatedDouble && !game.turn.usedDouble) {
@@ -65,13 +66,21 @@ export const gameUpdaters = extendType<
       game.mrXPlayer.tickets[ticket]++
     }
 
+    const currentPlayer = game.activePlayer
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const player of game.players) {
       game.turn.player = game.nextActivePlayer.color
 
-      if (game.activePlayerCanMove || game.isActivePlayerMrX) {
+      if (game.activePlayerCanMove) {
         break
       }
+    }
+
+    if (
+      !game.activePlayerCanMove ||
+      (currentPlayer === game.activePlayer && game.isActivePlayerMrX)
+    ) {
+      game.state.stage = 'mrXWin'
     }
   },
   moveTo(game, action: IdPayloadAction<{ station: number; ticket: Ticket }>) {
