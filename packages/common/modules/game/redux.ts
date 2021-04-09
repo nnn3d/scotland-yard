@@ -3,7 +3,6 @@ import { extendType } from 'common/utils/extendType'
 import { IdPayloadAction } from 'common/modules/redux/IdPayloadAction'
 import { GameState } from 'common/modules/game/types/GameState'
 import { GameStatic } from 'common/modules/game/Game'
-import { MR_X_COLOR } from 'common/modules/game/types/MrX'
 import { PlayerColor } from 'common/modules/game/types/PlayerColor'
 import { Ticket } from 'common/modules/game/types/Ticket'
 import { GAME_CONFIG } from 'common/modules/game/constants/gameConfig'
@@ -54,17 +53,16 @@ export const gameUpdaters = extendType<
       if (game.turn.number >= GAME_CONFIG.numberOfTurns) {
         game.state.stage = 'mrXWin'
       }
+
+      if (game.turn.activatedDouble && !game.turn.usedDouble) {
+        game.turn.usedDouble = true
+        return
+      }
+
+      game.turn.activatedDouble = false
+      game.turn.usedDouble = false
     } else {
       game.mrXPlayer.tickets[ticket]++
-    }
-
-    if (
-      game.isActivePlayerMrX &&
-      game.turn.activatedDouble &&
-      !game.turn.usedDouble
-    ) {
-      game.turn.usedDouble = true
-      return
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -80,8 +78,13 @@ export const gameUpdaters = extendType<
     gameUpdaters.mrXMoveTo(game, action)
   },
   useDoubleTicket(game, action: IdPayloadAction) {
-    if (game.activePlayer.color === MR_X_COLOR && !game.turn.activatedDouble) {
+    if (
+      game.isActivePlayerMrX &&
+      !game.turn.activatedDouble &&
+      game.mrXPlayer.tickets.double
+    ) {
       game.turn.activatedDouble = true
+      game.mrXPlayer.tickets.double--
     }
   },
   setMrXLastStation(
@@ -180,7 +183,6 @@ export const {
   extraReducers: (builder) => {
     builder.addCase(gameActions.delete, (state, { payload }) => {
       const gameIndex = state.findIndex((game) => game.id === payload._id)
-      console.log(gameIndex)
       if (gameIndex >= 0) {
         state.splice(gameIndex, 1)
       }
