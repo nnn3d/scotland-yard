@@ -26,11 +26,13 @@ export class GameRedux extends GameBase<AppState> {
 
     this.actions = {} as GameActionsWithId
     ;(Object.keys(gameActions) as Array<keyof GameActions>).forEach((key) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       this.actions[key] = ((payload: any) =>
         dispatch.sync(
           gameActions[key](
             Array.isArray(payload) ? payload : { ...payload, _id: this.id },
           ),
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         )) as any
     })
   }

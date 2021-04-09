@@ -16,12 +16,12 @@ export function GlobalLoader() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    let timeoutId: any
+    let timeoutId: number
     const unbind = status(client, (status) => {
       clearTimeout(timeoutId)
 
       if (['connecting', 'sending'].includes(status)) {
-        timeoutId = setTimeout(() => setIsLoading(true), 300)
+        timeoutId = window.setTimeout(() => setIsLoading(true), 300)
       } else {
         setIsLoading(false)
       }

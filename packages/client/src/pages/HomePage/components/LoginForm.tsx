@@ -125,6 +125,7 @@ export function LoginForm() {
                   name={'repeatPassword'}
                   label={'Повторите пароль'}
                   type={'password'}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   validate={(value, formValues: any) => {
                     if (value !== formValues.password) {
                       return 'Пароли не совпадают'

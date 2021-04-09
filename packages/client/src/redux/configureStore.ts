@@ -28,6 +28,7 @@ export const configureStore = () => {
 
   const composeEnhancers = (process.env.NODE_ENV === 'development' &&
     typeof window !== 'undefined' &&
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__' as any]) as any
 
   if (composeEnhancers) {
@@ -47,6 +48,7 @@ export const configureStore = () => {
     }
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   store.client.node.on('error', (error: any) => {
     if (error.type === 'wrong-credentials') {
       logout()
