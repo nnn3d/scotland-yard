@@ -19,7 +19,7 @@ import {
   PLAYER_COLORS,
   PlayerColor,
 } from 'common/modules/game/types/PlayerColor'
-import { COMMON_TICKETS, CommonTicket } from 'common/modules/game/types/Ticket'
+import { CommonTicket, TICKETS } from 'common/modules/game/types/Ticket'
 
 class GamePlayerTicketsSchema implements GamePlayerTicketsState {
   @prop({ required: true })
@@ -92,7 +92,7 @@ export class GameSchema implements GameState {
   @prop({ required: true, type: GamePlayerSchema })
   players!: GamePlayerState[]
 
-  @prop({ required: true, type: String, enum: COMMON_TICKETS })
+  @prop({ required: true, type: String, enum: TICKETS })
   mrXHistory!: CommonTicket[]
 
   @prop({ required: true, type: GameTurnSchema })
