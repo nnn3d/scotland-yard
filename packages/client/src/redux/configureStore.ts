@@ -18,8 +18,8 @@ export const configureStore = () => {
     server:
       process.env.NODE_ENV === 'development'
         ? `ws://${window.location.hostname}:4000`
-        : `ws://${window.location.hostname}`,
-    allowDangerousProtocol: true,
+        : `wss://${window.location.hostname}`,
+    allowDangerousProtocol: process.env.NODE_ENV === 'development',
     userId: localStorage.getItem('userId') || GUEST_USER,
     token: localStorage.getItem('token') || '',
   })
