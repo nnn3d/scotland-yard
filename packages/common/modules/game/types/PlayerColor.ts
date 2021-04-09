@@ -6,6 +6,7 @@ export const DETECTIVE_COLORS = [
   'blue',
   'yellow',
   'green',
+  'purple',
 ] as const
 export type DetectiveColor = typeof DETECTIVE_COLORS[number]
 

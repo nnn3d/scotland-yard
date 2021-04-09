@@ -210,7 +210,7 @@ export function gameModule(server: Server) {
     },
   })
 
-  gameType(gameActions.moveTo, {
+  gameType<typeof gameActions.moveTo, { isMrX?: boolean }>(gameActions.moveTo, {
     process(ctx, action, meta) {
       const { payload } = action
       const game = ctx.data.game
@@ -222,8 +222,7 @@ export function gameModule(server: Server) {
       const lastMrXStationAction = gameActions.setMrXLastStation(payload)
 
       if (game.gameOver) {
-        server.process(lastMrXStationAction, {
-          status: 'processed',
+        ctx.data.process(lastMrXStationAction, {
           channels: game.detectiveChannels,
         })
       }
@@ -237,14 +236,12 @@ export function gameModule(server: Server) {
           payload: { ...payload, station: undefined },
         }
 
-        server.process(actionForDetecrives, {
-          status: 'processed',
+        ctx.data.process(actionForDetecrives, {
           channels: game.detectiveChannels,
         })
         if (isDisclosureTurn) {
           gameUpdaters.setMrXLastStation(game, lastMrXStationAction)
-          server.process(lastMrXStationAction, {
-            status: 'processed',
+          ctx.data.process(lastMrXStationAction, {
             channels: game.detectiveChannels,
           })
         }
@@ -255,17 +252,20 @@ export function gameModule(server: Server) {
             _id: game.id,
           })
           gameUpdaters.detectiveWins(game, winAction)
-          server.process(winAction, {
-            status: 'processed',
-            channels: game.playerChannels,
-          })
-        } else {
-          server.process(action, {
-            status: 'processed',
+          ctx.data.process(winAction, {
             channels: game.playerChannels,
           })
         }
       }
+    },
+    resend(ctx, action, meta) {
+      if (typeof ctx.data.isMrX === 'undefined') {
+        ctx.data.isMrX = ctx.data.game.isActivePlayerMrX
+      }
+      if (!ctx.data.isMrX) {
+        return { channels: ctx.data.game.detectiveUsers }
+      }
+      return {}
     },
   })
 

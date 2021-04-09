@@ -27,6 +27,7 @@ const colorMap: Record<PlayerColor, string> = {
   blue: '#0000ff',
   green: '#008000',
   red: '#800000',
+  purple: '#800080',
 }
 
 export function MapGUI() {

@@ -6,6 +6,7 @@ import playerBlueImg from 'assets/playerBluePiece.png'
 import playerGreenImg from 'assets/playerGreenPiece.png'
 import playerRedImg from 'assets/playerRedPiece.png'
 import playerYellowImg from 'assets/playerYellowPiece.png'
+import playerPurpleImg from 'assets/playerPurplePiece.png'
 import taxiStationImg from 'assets/taxiStation.png'
 import taxiStationActiveImg from 'assets/taxiStationActive.png'
 import taxiStationDisabledImg from 'assets/taxiStationDisabled.png'
@@ -28,6 +29,7 @@ export const playerImages: Record<PlayerColor, string> = {
   green: playerGreenImg,
   red: playerRedImg,
   yellow: playerYellowImg,
+  purple: playerPurpleImg,
 }
 export const typeImages: Record<
   CommonTicket,

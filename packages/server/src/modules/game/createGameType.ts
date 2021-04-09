@@ -1,5 +1,9 @@
 import { Server, Action } from '@logux/server'
-import { ActionCreator, ActionCallbacks } from '@logux/server/base-server'
+import {
+  ActionCreator,
+  ActionCallbacks,
+  ServerMeta,
+} from '@logux/server/base-server'
 import { GameModel, GameDocument } from './game.schema'
 import { GUEST_USER } from 'common/modules/user/redux'
 import { EntityQueue } from 'modules/EntityQueue'
@@ -7,7 +11,11 @@ import { GameServer } from 'modules/game/GameServer'
 
 export const gameQueue = new EntityQueue()
 
-type CtxData = { gameDoc: GameDocument; game: GameServer }
+type CtxData = {
+  gameDoc: GameDocument
+  game: GameServer
+  process(action: Action, meta?: Partial<ServerMeta>): Promise<ServerMeta>
+}
 
 export function createGameType<S extends Server<H>, H extends object = {}>(
   server: S,
@@ -24,6 +32,7 @@ export function createGameType<S extends Server<H>, H extends object = {}>(
     {
       access,
       process,
+      resend,
       finally: finallyCallback,
       ...callbacks
     }: Partial<ActionCallbacks<ReturnType<AC>, D & CtxData, H>>,
@@ -32,6 +41,11 @@ export function createGameType<S extends Server<H>, H extends object = {}>(
     server.type<AC, D & { doneTask(): void } & CtxData>(actionCreator, {
       ...callbacks,
       async access(ctx, action, meta) {
+        ctx.data.process = (action, meta = {}) =>
+          server.process(action, {
+            status: 'processed',
+            ...meta,
+          })
         ctx.data.doneTask = gameQueue.createTask(action.payload._id)
 
         if (ctx.userId === GUEST_USER) return false
