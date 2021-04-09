@@ -35,14 +35,6 @@ function showStation({
   const nextScale = Math.min(4, maxDimension)
   const scaleDiff = nextScale / contextRef.current.state.scale
 
-  console.log({
-    imageWidth,
-    imageHeight,
-    rect,
-    widthDimension,
-    heightDimension,
-  })
-
   const { left, top } = STATIONS[station]
   const x =
     -imageWidth * left * scaleDiff +

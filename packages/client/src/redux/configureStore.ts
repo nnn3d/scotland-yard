@@ -26,8 +26,7 @@ export const configureStore = () => {
 
   let middleware = applyMiddleware(...getDefaultMiddleware())
 
-  const composeEnhancers = (process.env.NODE_ENV === 'development' &&
-    typeof window !== 'undefined' &&
+  const composeEnhancers = (typeof window !== 'undefined' &&
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__' as any]) as any
 
