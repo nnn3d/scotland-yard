@@ -32,7 +32,7 @@ function showStation({
   const imageWidth = (rect.width * widthDimension) / maxDimension
   const imageHeight = (rect.height * heightDimension) / maxDimension
 
-  const nextScale = Math.min(4, maxDimension)
+  const nextScale = Math.min(3, maxDimension)
   const scaleDiff = nextScale / contextRef.current.state.scale
 
   const { left, top } = STATIONS[station]
