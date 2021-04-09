@@ -108,7 +108,7 @@ export function GameInner() {
             maxScale: dimension,
           }}
           wheel={{
-            step: 40,
+            step: 300,
           }}
         >
           <MapPlayersObserver mapRef={mapRef} />
