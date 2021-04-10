@@ -61,10 +61,7 @@ function MapPlayer({ player }: { player: GamePlayerState }) {
 
   if (player.color === MR_X_COLOR && (isPlayerDetective || gameOver)) {
     image = mrXLastPositionImg
-
-    if (gameOver === 'detectivesWin') {
-      style = { ...style, opacity: 0.7 }
-    }
+    style = { ...style, opacity: 0.7 }
   }
 
   return (

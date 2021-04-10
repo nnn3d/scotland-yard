@@ -33,7 +33,6 @@ export function useMapPlayersObserver() {
 
   useEffect(() => {
     const { station } = game.activePlayer(store.getState())
-    console.log('here')
     setTimeout(() => {
       showStationWithScale({ station }, true)
     }, 1000)
