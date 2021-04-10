@@ -16,7 +16,7 @@ type Positions = Partial<Record<PlayerColor | number, { x: number; y: number }>>
 
 const THROTTLE_WAIT = 100
 
-const POINTER_SIZE = 20
+const POINTER_SIZE = 24
 
 export function MapPointers() {
   const game = useGame()
