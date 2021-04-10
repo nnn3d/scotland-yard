@@ -204,9 +204,8 @@ export function gameModule(server: Server) {
       const game = ctx.data.game
 
       gameUpdaters.useDoubleTicket(game, action)
-    },
-    resend(ctx, action, meta) {
-      return { channels: ctx.data.game.playerChannels }
+
+      ctx.data.process(action, { channels: ctx.data.game.playerChannels })
     },
   })
 
