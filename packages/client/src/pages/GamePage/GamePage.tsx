@@ -1,7 +1,6 @@
 import styled from 'styled-components'
 import mapImg from 'assets/map.png'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-
+import React, { useEffect, useMemo, useState } from 'react'
 import { MapStations } from 'pages/GamePage/components/MapStations'
 import { useSubscription } from '@logux/redux'
 import {
@@ -16,12 +15,17 @@ import { useDispatch, useSelector } from 'react-redux'
 import { CircularProgress } from '@material-ui/core'
 import { GameRedux } from 'redux/GameRedux'
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
-import { GameContext } from './components/GameContext'
+import { GameContext, useGame } from './components/GameContext'
 import { MapPlayers } from 'pages/GamePage/components/MapPlayers'
 import { MapGUI } from './components/MapGUI'
 import { GameOver } from 'pages/GamePage/components/GameOver'
-import { MapPlayersObserver } from 'pages/GamePage/components/MapPlayersObserver'
+import { useMapPlayersObserver } from 'pages/GamePage/components/MapPlayersObserver'
 import { IMAGE_SIZE } from 'pages/GamePage/utils/imageMaps'
+import {
+  mapContainerRef,
+  MapTransformContextUpdater,
+} from 'pages/GamePage/utils/map'
+import { MAP_Y_PADDING } from 'pages/GamePage/utils/constants'
 
 export function GamePage({ detectivesMap }: { detectivesMap?: boolean }) {
   const userId = useUserId()
@@ -62,6 +66,7 @@ export function GamePage({ detectivesMap }: { detectivesMap?: boolean }) {
 }
 
 export function GameInner() {
+  const game = useGame()
   const [viewportSize, setViewportSize] = useState(() => ({
     width: document.documentElement.clientWidth,
     height: document.documentElement.clientHeight,
@@ -82,8 +87,6 @@ export function GameInner() {
     }
   }, [])
 
-  const mapRef = useRef<HTMLDivElement>(null)
-
   const dimension = useMemo(() => {
     const widthDimension = IMAGE_SIZE.width / viewportSize.width
     const heightDimension = IMAGE_SIZE.height / viewportSize.height
@@ -92,29 +95,24 @@ export function GameInner() {
 
   const fontSize = 35 / dimension
 
+  useMapPlayersObserver()
+
   return useMemo(
     () => (
       <>
-        <MapGUI />
-        <GameOver />
         <TransformWrapper
-          scalePadding={{
-            disabled: true,
-          }}
-          pan={{
-            paddingSize: 0,
-          }}
-          options={{
-            maxScale: dimension,
-          }}
-          wheel={{
-            step: 300,
-          }}
+          scalePadding={{ disabled: true }}
+          pan={{ paddingSize: 0 }}
+          options={{ maxScale: dimension }}
+          wheel={{ step: 300 }}
+          {...game.mapComponentHandlers}
         >
-          <MapPlayersObserver mapRef={mapRef} />
+          <MapTransformContextUpdater />
+          <MapGUI />
+          <GameOver />
           <STransformComponent>
             <TransformComponent>
-              <SWrapper ref={mapRef}>
+              <SWrapper ref={mapContainerRef}>
                 <SContainer fontSize={fontSize}>
                   <SMapImg src={mapImg} />
                   <MapStations />
@@ -126,7 +124,7 @@ export function GameInner() {
         </TransformWrapper>
       </>
     ),
-    [dimension, fontSize],
+    [dimension, fontSize, game.mapComponentHandlers],
   )
 }
 
@@ -159,7 +157,7 @@ const SWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 40px 0;
+  padding: ${MAP_Y_PADDING}px 0;
 `
 
 const SContainer = styled.div<{ fontSize: number }>`

@@ -51,8 +51,11 @@ module.exports = function override(config) {
     const TsCheckerPlugin = config.plugins.find(
       (plugin) => plugin.constructor.name === 'ForkTsCheckerWebpackPlugin',
     )
-    TsCheckerPlugin.options.typescript = false
-    TsCheckerPlugin.options.eslint = undefined
+    config.plugins.splice(
+      config.plugins.indexOf(TsCheckerPlugin),
+      1,
+      new TsCheckerPlugin.constructor({ typescript: false, eslint: false }),
+    )
 
     // resolve common folder not from node_modules
     config.resolve.modules.unshift(require('path').resolve(__dirname, '../'))

@@ -9,7 +9,7 @@ import mrXLastPositionImg from 'assets/mrXLastPosition.png'
 import { STATIONS } from 'common/modules/game/constants/stations'
 import { MR_X_COLOR } from 'common/modules/game/types/MrX'
 import { animated, useSpring } from 'react-spring'
-import { playerImages } from 'pages/GamePage/utils/imageMaps'
+import { playerPieces } from 'pages/GamePage/utils/imageMaps'
 
 export function MapPlayers() {
   const game = useGame()
@@ -57,7 +57,7 @@ function MapPlayer({ player }: { player: GamePlayerState }) {
     return null
   }
 
-  let image = playerImages[player.color]
+  let image = playerPieces[player.color]
 
   if (player.color === MR_X_COLOR && (isPlayerDetective || gameOver)) {
     image = mrXLastPositionImg

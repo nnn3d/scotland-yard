@@ -5,6 +5,10 @@ import { AnyAction } from '@logux/core'
 import { LoguxDispatch } from '@logux/redux/create-logux-creator'
 import { useUserId } from 'hooks/useUserId'
 import { GamePlayerState, GameState } from 'common/modules/game/types/GameState'
+import EventEmitter from 'eventemitter3'
+import { PropsList as MapProps } from 'react-zoom-pan-pinch/dist/store/interfaces/propsInterface'
+import { MR_X_COLOR } from 'common/modules/game/types/MrX'
+import { useIsDetectivesMap } from 'pages/GamePage/components/GameContext'
 
 type GameActions = typeof gameActions
 
@@ -18,8 +22,48 @@ type GameActionsWithId = {
       ) => ReturnType<GameActions[K]>
 }
 
+export type MapState = {
+  previousScale: number
+  scale: number
+  positionX: number
+  positionY: number
+}
+
+export type MapHandlerState = MapState & MapProps
+
+export type MapEventNames =
+  | 'panning'
+  | 'panningStart'
+  | 'panningStop'
+  | 'pinching'
+  | 'pinchingStart'
+  | 'pinchingStop'
+  | 'wheel'
+  | 'wheelStart'
+  | 'wheelStop'
+  | 'zoomChange'
+
 export class GameRedux extends GameBase<AppState> {
   readonly actions: GameActionsWithId
+
+  readonly map = new EventEmitter<Record<MapEventNames, [MapHandlerState]>>()
+
+  createMapPropHandler = (name: MapEventNames) => (data: MapHandlerState) => {
+    this.map.emit(name, data)
+  }
+
+  readonly mapComponentHandlers = {
+    onPanning: this.createMapPropHandler('panning'),
+    onPanningStart: this.createMapPropHandler('panningStart'),
+    onPanningStop: this.createMapPropHandler('panningStop'),
+    onPinching: this.createMapPropHandler('pinching'),
+    onPinchingStart: this.createMapPropHandler('pinchingStart'),
+    onPinchingStop: this.createMapPropHandler('pinchingStop'),
+    onWheel: this.createMapPropHandler('wheel'),
+    onWheelStart: this.createMapPropHandler('wheelStart'),
+    onWheelStop: this.createMapPropHandler('wheelStop'),
+    onZoomChange: this.createMapPropHandler('zoomChange'),
+  } as const
 
   constructor(public readonly id: string, dispatch: LoguxDispatch<AnyAction>) {
     super()
@@ -48,13 +92,6 @@ export class GameRedux extends GameBase<AppState> {
     return userId === mrXPlayer.userName
   }
 
-  useIsCurrentUserActivePlayer = () => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const userId = useUserId()
-    const activePlayer = this.activePlayer.use()
-    return activePlayer.userName === userId
-  }
-
   useCurrentUserPlayer = () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const userId = useUserId()
@@ -62,5 +99,22 @@ export class GameRedux extends GameBase<AppState> {
     return players.find(
       ({ userName }) => userName === userId,
     ) as GamePlayerState
+  }
+
+  useIsCurrentUserActivePlayer = () => {
+    const activePlayer = this.activePlayer.use()
+    const canMove = this.activePlayerCanMove.use()
+    const gameOver = this.gameOver.use()
+    const userPlayer = this.useCurrentUserPlayer()
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const isDetectivesMap = useIsDetectivesMap()
+
+    return (
+      !gameOver &&
+      (isDetectivesMap
+        ? activePlayer.color !== MR_X_COLOR
+        : activePlayer === userPlayer) &&
+      canMove
+    )
   }
 }

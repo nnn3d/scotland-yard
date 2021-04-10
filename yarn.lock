@@ -1718,6 +1718,11 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
+"@juggle/resize-observer@^3.2.0":
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.3.0.tgz#2e7a2935adbfae46f9efbd1e1455254ee7ea2219"
+  integrity sha512-P1v2nvK7z2gOLVM/bveIRLG9L99uEahTGgTltyF03zixZAjI9YmKLj5Z9MpS9wBIUt5WDoQORT2lXvLOIF89iA==
+
 "@logux/client@^0.9.2":
   version "0.9.2"
   resolved "https://registry.yarnpkg.com/@logux/client/-/client-0.9.2.tgz"
@@ -5963,9 +5968,9 @@ eventemitter3@^4.0.0:
   resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-4.0.4.tgz"
   integrity sha512-rlaVLnVxtxvoyLsQQFBx53YmXHDxRIzzTLbdfxqi4yocpSjAxXwkU0cScM5JgSKMqEhrZpnvQ2D9gjylR0AimQ==
 
-eventemitter3@^4.0.4:
+eventemitter3@^4.0.4, eventemitter3@^4.0.7:
   version "4.0.7"
-  resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-4.0.7.tgz"
+  resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-4.0.7.tgz#2de9b68f6528d5644ef5c59526a1b4a07306169f"
   integrity sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==
 
 events@^3.0.0:
@@ -11360,6 +11365,14 @@ react-universal-interface@^0.6.2:
   resolved "https://registry.yarnpkg.com/react-universal-interface/-/react-universal-interface-0.6.2.tgz"
   integrity sha512-dg8yXdcQmvgR13RIlZbTRQOoUrDciFVoSBZILwjE2LFISxZZ8loVJKAkuzswl5js8BHda79bIb2b84ehU8IjXw==
 
+react-use-rect@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/react-use-rect/-/react-use-rect-1.1.0.tgz#967ae5e05060aa42337729af81eea4413eeb5015"
+  integrity sha512-FfJP4vnGi9rWTCB6k+uT26aeV3lHY3p4QyJG/8IAH0cJlsz2TARssck7AD4v463ZOFyiIELFVCobS7f7+i/vsA==
+  dependencies:
+    "@juggle/resize-observer" "^3.2.0"
+    tslib "^2.0.3"
+
 react-use@15.3.3:
   version "15.3.3"
   resolved "https://registry.yarnpkg.com/react-use/-/react-use-15.3.3.tgz"
@@ -13350,6 +13363,11 @@ tslib@^2.0.1:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.1.0.tgz#da60860f1c2ecaa5703ab7d39bc05b6bf988b97a"
   integrity sha512-hcVC3wYEziELGGmEEXue7D75zbwIIVUMWAVbHItGPx0ziyXxrOMQx4rQEVEV45Ut/1IotuEvwqPopzIOkDMf0A==
+
+tslib@^2.0.3:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.2.0.tgz#fb2c475977e35e241311ede2693cee1ec6698f5c"
+  integrity sha512-gS9GVHRU+RGn5KQM2rllAlR3dU6m7AcpJKdtH8gFvQiC4Otgk98XnmMU+nZenHt/+VhnBPWwgrJsyrdcw6i23w==
 
 tsutils@^3.17.1:
   version "3.17.1"

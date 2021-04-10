@@ -19,6 +19,7 @@ import {
   useMediaQuery,
 } from '@material-ui/core'
 import { GamePlayerState } from 'common/modules/game/types/GameState'
+import { MapPointers } from 'pages/GamePage/components/MapPointers'
 
 const colorMap: Record<PlayerColor, string> = {
   white: '#fff',
@@ -42,6 +43,9 @@ export function MapGUI() {
           <Player key={player.color} player={player} />
         ))}
       </SPlayers>
+      <SBody>
+        <MapPointers />
+      </SBody>
       <SMrXHistory>
         {[...Array(GAME_CONFIG.numberOfTurns)].map((_, index) => (
           <SHistoryItem
@@ -111,8 +115,19 @@ function Player({ player }: { player: GamePlayerState }) {
 }
 
 const SRoot = styled.div`
-  position: relative;
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
   z-index: 100;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+`
+
+const SBody = styled.div`
+  flex-grow: 1;
 `
 
 const STicket = styled.img`
@@ -123,11 +138,7 @@ const STicket = styled.img`
 `
 
 const SMrXHistory = styled.div`
-  position: fixed;
-  bottom: 8px;
   gap: 4px;
-  left: 8px;
-  right: 8px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -170,6 +181,7 @@ const SPlayer = styled.div<{ color: string; active: boolean }>`
   box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.7);
   display: flex;
   align-items: center;
+  pointer-events: all;
 `
 
 const SPlayerName = styled.span`
@@ -177,11 +189,7 @@ const SPlayerName = styled.span`
 `
 
 const SPlayers = styled.div`
-  position: fixed;
   gap: 8px;
-  top: 8px;
-  left: 8px;
-  right: 8px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;

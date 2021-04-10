@@ -15,10 +15,7 @@ import {
   GameTurnState,
 } from 'common/modules/game/types/GameState'
 import { MR_X_COLOR } from 'common/modules/game/types/MrX'
-import {
-  useGame,
-  useIsDetectivesMap,
-} from 'pages/GamePage/components/GameContext'
+import { useGame } from 'pages/GamePage/components/GameContext'
 import { ticketImages, typeImages } from 'pages/GamePage/utils/imageMaps'
 
 export const MapStations = React.memo(function MapStations() {
@@ -26,9 +23,7 @@ export const MapStations = React.memo(function MapStations() {
   const activePlayer = game.activePlayer.use()
   const canMoveToStations = game.activePlayerCanMoveToStations.use()
   const turn = game.turn.use()
-  const gameOver = game.gameOver.use()
-  const isDetectivesMap = useIsDetectivesMap()
-  const userPlayer = game.useCurrentUserPlayer()
+  const active = game.useIsCurrentUserActivePlayer()
 
   return (
     <>
@@ -38,11 +33,9 @@ export const MapStations = React.memo(function MapStations() {
             key: station.index,
             station,
             activePlayer,
-            userPlayer,
             turn,
-            gameOver,
             canMoveToStations,
-            isDetectivesMap,
+            active,
           }}
         />
       ))}
@@ -53,29 +46,19 @@ export const MapStations = React.memo(function MapStations() {
 export const MapStation = React.memo(function MapStation({
   station,
   canMoveToStations,
-  gameOver,
   activePlayer,
-  userPlayer,
   turn,
-  isDetectivesMap,
+  active,
 }: {
   station: Station
   canMoveToStations: Station['routes']
-  gameOver: string | undefined
   activePlayer: GamePlayerState
-  userPlayer: GamePlayerState
   turn: GameTurnState
-  isDetectivesMap: boolean
+  active: boolean
 }) {
   const game = useGame()
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
   const availableTickets = canMoveToStations[station.index]
-  const active =
-    !gameOver &&
-    (isDetectivesMap
-      ? activePlayer.color !== MR_X_COLOR
-      : activePlayer === userPlayer) &&
-    Boolean(availableTickets)
 
   return (
     <>

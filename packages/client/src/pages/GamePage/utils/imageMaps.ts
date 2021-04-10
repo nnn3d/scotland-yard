@@ -1,12 +1,19 @@
 import { PlayerColor } from 'common/modules/game/types/PlayerColor'
 import { CommonTicket, MrXTicket } from 'common/modules/game/types/Ticket'
-import playerWhiteImg from 'assets/playerWhitePiece.png'
-import playerBlackImg from 'assets/playerBlackPiece.png'
-import playerBlueImg from 'assets/playerBluePiece.png'
-import playerGreenImg from 'assets/playerGreenPiece.png'
-import playerRedImg from 'assets/playerRedPiece.png'
-import playerYellowImg from 'assets/playerYellowPiece.png'
-import playerPurpleImg from 'assets/playerPurplePiece.png'
+import playerWhitePieceImg from 'assets/playerWhitePiece.png'
+import playerBlackPieceImg from 'assets/playerBlackPiece.png'
+import playerBluePieceImg from 'assets/playerBluePiece.png'
+import playerGreenPieceImg from 'assets/playerGreenPiece.png'
+import playerRedPieceImg from 'assets/playerRedPiece.png'
+import playerYellowPieceImg from 'assets/playerYellowPiece.png'
+import playerPurplePieceImg from 'assets/playerPurplePiece.png'
+import playerWhitePointerImg from 'assets/playerWhitePointer.png'
+import playerBlackPointerImg from 'assets/playerBlackPointer.png'
+import playerBluePointerImg from 'assets/playerBluePointer.png'
+import playerGreenPointerImg from 'assets/playerGreenPointer.png'
+import playerRedPointerImg from 'assets/playerRedPointer.png'
+import playerYellowPointerImg from 'assets/playerYellowPointer.png'
+import playerPurplePointerImg from 'assets/playerPurplePointer.png'
 import taxiStationImg from 'assets/taxiStation.png'
 import taxiStationActiveImg from 'assets/taxiStationActive.png'
 import taxiStationDisabledImg from 'assets/taxiStationDisabled.png'
@@ -22,14 +29,23 @@ import undergroundTicketImg from 'assets/undergroundTicket.png'
 import blackTicketImg from 'assets/blackTicket.png'
 import doubleTicketImg from 'assets/doubleTicket.png'
 
-export const playerImages: Record<PlayerColor, string> = {
-  white: playerWhiteImg,
-  black: playerBlackImg,
-  blue: playerBlueImg,
-  green: playerGreenImg,
-  red: playerRedImg,
-  yellow: playerYellowImg,
-  purple: playerPurpleImg,
+export const playerPieces: Record<PlayerColor, string> = {
+  white: playerWhitePieceImg,
+  black: playerBlackPieceImg,
+  blue: playerBluePieceImg,
+  green: playerGreenPieceImg,
+  red: playerRedPieceImg,
+  yellow: playerYellowPieceImg,
+  purple: playerPurplePieceImg,
+}
+export const playerPointers: Record<PlayerColor, string> = {
+  white: playerWhitePointerImg,
+  black: playerBlackPointerImg,
+  blue: playerBluePointerImg,
+  green: playerGreenPointerImg,
+  red: playerRedPointerImg,
+  yellow: playerYellowPointerImg,
+  purple: playerPurplePointerImg,
 }
 export const typeImages: Record<
   CommonTicket,

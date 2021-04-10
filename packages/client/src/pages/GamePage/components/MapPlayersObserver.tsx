@@ -1,95 +1,57 @@
-import React, { MutableRefObject, useEffect, useRef } from 'react'
-import {
-  TransformContext,
-  useMapTransformContext,
-} from 'pages/GamePage/utils/useMapContext'
+import { useEffect, useRef } from 'react'
 import { useStore } from 'react-redux'
 import { gameActions } from 'common/modules/game/redux'
 import { useGame } from 'pages/GamePage/components/GameContext'
-import { STATIONS } from 'common/modules/game/constants/stations'
-import { IMAGE_SIZE } from '../utils/imageMaps'
+import {
+  getMapDimensions,
+  mapContainerRef,
+  showStation,
+  mapTransformRef,
+} from 'pages/GamePage/utils/map'
 
-function showStation({
-  station,
-  contextRef,
-  mapRef,
-}: {
-  station: undefined | number
-  contextRef: MutableRefObject<TransformContext | undefined>
-  mapRef: MutableRefObject<HTMLElement | null>
-}) {
-  if (!station || !mapRef.current || !contextRef.current) return
+function showStationWithScale(
+  { station }: { station: undefined | number },
+  bringCloser?: boolean,
+) {
+  if (!station || !mapContainerRef.current || !mapTransformRef.current) return
 
-  const clientWidth = document.documentElement.clientWidth
-  const clientHeight = document.documentElement.clientHeight
+  const mapDimensions = getMapDimensions()
 
-  const widthDimension = IMAGE_SIZE.width / clientWidth
-  const heightDimension = IMAGE_SIZE.height / clientHeight
+  const scale = bringCloser ? Math.min(3, mapDimensions.maxRatio) : undefined
 
-  const maxDimension = Math.max(widthDimension, heightDimension)
-
-  const rect = mapRef.current.getBoundingClientRect()
-  const imageWidth = (rect.width * widthDimension) / maxDimension
-  const imageHeight = (rect.height * heightDimension) / maxDimension
-
-  const nextScale = Math.min(3, maxDimension)
-  const scaleDiff = nextScale / contextRef.current.state.scale
-
-  const { left, top } = STATIONS[station]
-  const x =
-    -imageWidth * left * scaleDiff +
-    clientWidth / 2 -
-    ((rect.width - imageWidth) * scaleDiff) / 2
-  const y =
-    -imageHeight * top * scaleDiff +
-    clientHeight / 2 -
-    ((rect.height - imageHeight) * scaleDiff) / 2
-
-  contextRef.current.dispatch.setTransform(x, y, nextScale)
+  showStation({
+    station,
+    mapDimensions,
+    scale,
+  })
 }
 
-export function MapPlayersObserver({
-  mapRef,
-}: {
-  mapRef: MutableRefObject<HTMLElement | null>
-}) {
-  const contextRef = useRef<TransformContext | undefined>()
+export function useMapPlayersObserver() {
   const animationRef = useRef<number | undefined>()
   const store = useStore()
   const game = useGame()
 
   useEffect(() => {
     const { station } = game.activePlayer(store.getState())
+    console.log('here')
     setTimeout(() => {
-      showStation({ station, mapRef, contextRef })
-    }, 500)
-  }, [game, mapRef, store])
+      showStationWithScale({ station }, true)
+    }, 1000)
+  }, [game, store])
 
   useEffect(() => {
     store.client.on('add', (action) => {
-      if (action.type === gameActions.moveTo.type && mapRef.current) {
+      if (action.type === gameActions.moveTo.type) {
         const { station } = game.activePlayer(store.getState())
 
         if (station) {
           clearTimeout(animationRef.current)
 
           animationRef.current = window.setTimeout(() => {
-            showStation({ station, mapRef, contextRef })
+            showStationWithScale({ station })
           }, 600)
         }
       }
     })
-  }, [game, mapRef, store])
-
-  return <ContextToRefUpdater contextRef={contextRef} />
-}
-
-function ContextToRefUpdater({
-  contextRef,
-}: {
-  contextRef: MutableRefObject<TransformContext | undefined>
-}) {
-  contextRef.current = useMapTransformContext()
-
-  return null
+  }, [game, store])
 }

@@ -93,6 +93,11 @@ export abstract class GameBase<AppState = any> {
       ) as Record<number, Ticket[] | undefined>,
   )
 
+  activePlayerCanMoveToStationsList = createSelector(
+    this.activePlayerCanMoveToStations,
+    (canMoveToStations) => Object.keys(canMoveToStations).map(Number),
+  )
+
   activePlayerCanMove = createSelector(
     this.activePlayerCanMoveToStations,
     (canMoveToStations) => Object.keys(canMoveToStations).length > 0,
