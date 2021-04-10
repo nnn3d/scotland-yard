@@ -171,6 +171,6 @@ const SContainer = styled.div<{ fontSize: number }>`
 
 const SMapImg = styled.img`
   max-width: 100%;
-  max-height: calc(100vh - 80px);
+  max-height: calc(100vh - ${MAP_Y_PADDING * 2}px);
   flex: 0;
 `

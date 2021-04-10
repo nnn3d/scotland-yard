@@ -196,7 +196,7 @@ function getMapStationRelativeViewportPosition(
       Math.abs(yRelativeViewport),
     )
 
-    if (max <= 1) {
+    if (max <= (clientWidth > 700 ? 1.1 : 1)) {
       return
     }
 

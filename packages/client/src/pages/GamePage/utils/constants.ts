@@ -1,1 +1,1 @@
-export const MAP_Y_PADDING = 40
+export const MAP_Y_PADDING = 60
