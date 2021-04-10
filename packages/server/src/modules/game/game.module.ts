@@ -78,7 +78,7 @@ export function gameModule(server: Server) {
       }
 
       const userDocs = await UserModel.find({
-        login: new RegExp(name.toLowerCase()),
+        login: new RegExp(name.toLowerCase(), 'i'),
       })
         .limit(10)
         .exec()
