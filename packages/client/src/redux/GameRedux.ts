@@ -89,7 +89,9 @@ export class GameRedux extends GameBase<AppState> {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const userId = useUserId()
     const mrXPlayer = this.mrXPlayer.use()
-    return userId === mrXPlayer.userName
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const isDetectivesMap = useIsDetectivesMap()
+    return userId === mrXPlayer.userName && !isDetectivesMap
   }
 
   useCurrentUserPlayer = () => {
