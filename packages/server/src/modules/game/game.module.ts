@@ -256,16 +256,10 @@ export function gameModule(server: Server) {
             channels: game.playerChannels,
           })
         }
+        ctx.data.process(action, {
+          channels: ctx.data.game.playerChannels,
+        })
       }
-    },
-    resend(ctx, action, meta) {
-      if (typeof ctx.data.isMrX === 'undefined') {
-        ctx.data.isMrX = ctx.data.game.isActivePlayerMrX
-      }
-      if (!ctx.data.isMrX) {
-        return { channels: ctx.data.game.detectiveUsers }
-      }
-      return {}
     },
   })
 
