@@ -103,7 +103,6 @@ export class GameRedux extends GameBase<AppState> {
 
   useIsCurrentUserActivePlayer = () => {
     const activePlayer = this.activePlayer.use()
-    const canMove = this.activePlayerCanMove.use()
     const gameOver = this.gameOver.use()
     const userPlayer = this.useCurrentUserPlayer()
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -113,8 +112,7 @@ export class GameRedux extends GameBase<AppState> {
       !gameOver &&
       (isDetectivesMap
         ? activePlayer.color !== MR_X_COLOR
-        : activePlayer === userPlayer) &&
-      canMove
+        : activePlayer === userPlayer)
     )
   }
 }

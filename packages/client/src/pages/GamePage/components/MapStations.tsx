@@ -23,7 +23,7 @@ export const MapStations = React.memo(function MapStations() {
   const activePlayer = game.activePlayer.use()
   const canMoveToStations = game.activePlayerCanMoveToStations.use()
   const turn = game.turn.use()
-  const active = game.useIsCurrentUserActivePlayer()
+  const currentPlayerActive = game.useIsCurrentUserActivePlayer()
 
   return (
     <>
@@ -35,7 +35,7 @@ export const MapStations = React.memo(function MapStations() {
             activePlayer,
             turn,
             canMoveToStations,
-            active,
+            currentPlayerActive,
           }}
         />
       ))}
@@ -48,17 +48,18 @@ export const MapStation = React.memo(function MapStation({
   canMoveToStations,
   activePlayer,
   turn,
-  active,
+  currentPlayerActive,
 }: {
   station: Station
   canMoveToStations: Station['routes']
   activePlayer: GamePlayerState
   turn: GameTurnState
-  active: boolean
+  currentPlayerActive: boolean
 }) {
   const game = useGame()
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
   const availableTickets = canMoveToStations[station.index]
+  const active = currentPlayerActive && Boolean(availableTickets)
 
   return (
     <>
