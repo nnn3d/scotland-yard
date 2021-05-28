@@ -19,7 +19,7 @@ async function run() {
     response.sendFile(path.resolve(staticDir, 'index.html'))
   })
 
-  const httpServer = await app.listen(80)
+  const httpServer = await app.listen(process.env.PORT || 80)
 
   // hack to prevent logux rewrite routes
   const _on = httpServer.on
